@@ -16,3 +16,14 @@ sui 官方提供的sdk [https://docs.sui.io/testnet/build/rust-sdk](https://docs
 
 ## 已实现的功能
 
+## 示例合约介绍
+
+playground 提供一个测试模块，已完成move_call 的相关功能
+
+1. 合约 资源 ${address}::hello_world::HelloWorldObject
+2. entry : mint, mint_to , update_text, destroy
+
+## 程序演示
+
+## TODO 
+
