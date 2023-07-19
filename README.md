@@ -1,2 +1,18 @@
 # sui-rust-operator
-sui operator implement with rust 
+
+用rust 封装的一个和sui进行交互的组件库。
+
+## 项目起因
+
+sui 官方提供的sdk [https://docs.sui.io/testnet/build/rust-sdk](https://docs.sui.io/testnet/build/rust-sdk) 过于臃肿，使用不太方便。
+
+## 基本思路
+
+1. 使用 std ，reqwest 完成基本的rpc 的http 请求部分
+2. 使用 serde serde_json 完成相关结构的封装
+3. 按照 官方提供的 [RPC 文档](https://docs.sui.io/sui-jsonrpc)，和sui 进行交互。
+4. 对于需要签名的请求，根据 unsafe 请求，构建未签名的 tx-bytes
+5. 使用 ed25519-dalek 封装账号结构，对未签名的tx-bytes 完成签名，重新发送，完成执行
+
+## 已实现的功能
+
