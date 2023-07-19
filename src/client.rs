@@ -1,7 +1,8 @@
 use crate::network::Network;
 use crate::payload::{self, FilterOption, Payload};
 use crate::response::{
-    JsonResult, ObjectList, SimpleObject, TransactionEffect, UnsafeTransactionResult,
+    Balance, CoinList, JsonResult, ObjectList, SimpleObject, TransactionEffect,
+    UnsafeTransactionResult,
 };
 use reqwest::{self, Response};
 use serde_json::{to_value, Value};
@@ -202,5 +203,63 @@ impl Client {
                 Ok(json_object) => Ok(json_object),
             },
         }
+    }
+
+    pub async fn get_all_balances(
+        &self,
+        owner_address: String,
+    ) -> Result<JsonResult<Vec<Balance>>, Box<dyn Error>> {
+        let payload = Payload::build(
+            "suix_getAllBalances".to_string(),
+            vec![Value::String(owner_address)],
+        );
+
+        match self.send_payload(&payload).await {
+            Err(err) => Err(err),
+            Ok(resp) => match resp.json::<JsonResult<Vec<Balance>>>().await {
+                Err(err) => Err(Box::new(err)),
+                Ok(json_object) => Ok(json_object),
+            },
+        }
+    }
+
+    pub async fn get_all_coins(
+        &self,
+        owner_address: String,
+        coin_type: String,
+        cursor: Option<String>,
+        limit: Option<u64>,
+    ) -> Result<JsonResult<CoinList>, Box<dyn Error>> {
+        let payload = Payload::build(
+            "suix_getCoins".to_string(),
+            vec![
+                Value::String(owner_address),
+                Value::String(coin_type),
+                match cursor {
+                    None => Value::Null,
+                    Some(v) => Value::String(v),
+                },
+                match limit {
+                    None => Value::Null,
+                    Some(v) => Value::from(v),
+                },
+            ],
+        );
+
+        match self.send_payload(&payload).await {
+            Err(err) => Err(err),
+            Ok(resp) => match resp.json::<JsonResult<CoinList>>().await {
+                Err(err) => Err(Box::new(err)),
+                Ok(json_object) => Ok(json_object),
+            },
+        }
+    }
+
+    pub async fn get_gas_list(
+        &self,
+        owner_address: String,
+    ) -> Result<JsonResult<CoinList>, Box<dyn Error>> {
+        self.get_all_coins(owner_address, "0x2::sui::SUI".to_string(), None, None)
+            .await
     }
 }

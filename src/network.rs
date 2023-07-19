@@ -10,6 +10,10 @@ pub enum Network {
 }
 
 pub fn default() -> Network {
+    from_env()
+}
+
+pub fn from_env() -> Network {
     const ENV_NAME: &str = "network";
     let mut network: Network = Network::Mainnet;
     if env::var_os(ENV_NAME).is_some() {

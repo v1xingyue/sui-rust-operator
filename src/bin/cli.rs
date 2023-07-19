@@ -29,15 +29,30 @@ async fn main() {
                     }
                 }
 
-                // let query = payload::QueryOption::with_module(
-                //     "0xe818a1389a61d628b375d0c13f8f472b18e17bb9da5b2ea52c0f01653cd5ada6"
-                //         .to_string(),
-                //     "hello_world".to_string(),
-                // );
+                match myclient.get_all_balances(account.to_address()).await {
+                    Err(err) => {
+                        println!("err :{}", err)
+                    }
+                    Ok(result) => {
+                        for balance in result.result {
+                            println!(" {} => {}", balance.coin_type, balance.total_balance)
+                        }
+                    }
+                }
 
-                // myclient
-                //     .get_owned_objects(account.to_address(), query, None, None)
-                //     .await
+                match myclient.get_gas_list(account.to_address()).await {
+                    Err(err) => {
+                        println!("err :{}", err)
+                    }
+                    Ok(result) => {
+                        for info in result.result.data {
+                            println!(
+                                " {} , {} , {}",
+                                info.coin_type, info.coin_object_id, info.balance
+                            );
+                        }
+                    }
+                }
             }
         }
     }

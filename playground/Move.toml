@@ -3,7 +3,7 @@ name = "playground"
 version = "0.0.1"
 
 [dependencies]
-Sui = {local="../../../outcode/git/sui/crates/sui-framework/packages/sui-framework"}
+Sui = {local="../../sui/crates/sui-framework/packages/sui-framework"}
 
 [addresses]
 playground = "0x0"

@@ -200,3 +200,35 @@ impl Default for ObjectList {
         }
     }
 }
+
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Balance {
+    pub coin_type: String,
+    pub coin_object_count: u64,
+    pub total_balance: String,
+    pub locked_balance: Value,
+}
+
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CoinList {
+    pub data: Vec<CoinInfo>,
+}
+
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CoinInfo {
+    pub coin_type: String,
+    pub coin_object_id: String,
+    pub version: String,
+    pub digest: String,
+    pub balance: String,
+    pub previous_transaction: String,
+}
+
+impl Default for CoinList {
+    fn default() -> Self {
+        Self { data: vec![] }
+    }
+}
