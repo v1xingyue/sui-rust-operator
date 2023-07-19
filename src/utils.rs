@@ -18,6 +18,12 @@ impl CustomErr {
             msg: msg.to_string(),
         }
     }
+
+    pub fn new_box(msg: &str) -> Box<dyn Error> {
+        Box::new(Self {
+            msg: msg.to_string(),
+        })
+    }
 }
 
 impl Display for CustomErr {

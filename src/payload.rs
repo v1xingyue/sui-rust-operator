@@ -54,11 +54,13 @@ pub struct FilterOption {
     show_storage_rebate: bool,
 }
 
-impl FilterOption {
-    pub fn default_filter() -> Self {
+impl Default for FilterOption {
+    fn default() -> Self {
         Self::new(true, true, true, true, true, true, false)
     }
+}
 
+impl FilterOption {
     pub fn new(
         show_type: bool,
         show_owner: bool,
@@ -199,5 +201,70 @@ struct FaucetRequest {
 pub fn new_faucet(recipient: String) -> FaucetInfo {
     FaucetInfo {
         fixed_amount_request: FaucetRequest { recipient },
+    }
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct QueryOption {
+    options: FilterOption,
+    filter: QueryFilter,
+}
+
+impl Default for QueryOption {
+    fn default() -> Self {
+        Self {
+            options: FilterOption::default(),
+            filter: QueryFilter::default(),
+        }
+    }
+}
+
+impl QueryOption {
+    pub fn with_options(options: FilterOption) -> Self {
+        Self {
+            options,
+            filter: QueryFilter::default(),
+        }
+    }
+
+    pub fn with_package(package: String) -> Self {
+        Self {
+            options: FilterOption::default(),
+            filter: QueryFilter::MatchAll(vec![QueryFilter::Package(package)]),
+        }
+    }
+
+    pub fn with_module(package: String, module: String) -> Self {
+        Self {
+            options: FilterOption::default(),
+            filter: QueryFilter::MatchAll(vec![QueryFilter::MoveModule { package, module }]),
+        }
+    }
+
+    pub fn with_strutc_type(struct_type: String) -> Self {
+        Self {
+            options: FilterOption::default(),
+            filter: QueryFilter::MatchAll(vec![QueryFilter::StructType(struct_type)]),
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize)]
+pub enum QueryFilter {
+    MatchAll(Vec<QueryFilter>),
+    MatchAny(Vec<QueryFilter>),
+    MatchNone(Vec<QueryFilter>),
+    Package(String),
+    MoveModule {
+        /// the Move package ID
+        package: String,
+        module: String,
+    },
+    StructType(String),
+}
+
+impl Default for QueryFilter {
+    fn default() -> Self {
+        QueryFilter::MatchNone(vec![])
     }
 }

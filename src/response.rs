@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::default::Default;
+use std::{default::Default, vec};
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(untagged)]
@@ -56,6 +56,7 @@ pub struct ObjectData {
 #[derive(Serialize, Deserialize)]
 pub struct Owner {
     #[serde(rename = "ObjectOwner")]
+    #[serde(default)]
     object_owner: String,
 }
 
@@ -178,6 +179,24 @@ impl Default for MiniObject {
             object_id: String::from(""),
             version: 0,
             digest: String::from(""),
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct ObjectList {
+    pub data: Vec<SimpleObject>,
+    next_cursor: Option<String>,
+    has_next_page: bool,
+}
+
+impl Default for ObjectList {
+    fn default() -> Self {
+        Self {
+            data: vec![],
+            next_cursor: Some("".to_string()),
+            has_next_page: false,
         }
     }
 }

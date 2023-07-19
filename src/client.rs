@@ -1,13 +1,22 @@
 use crate::network::Network;
 use crate::payload::{self, FilterOption, Payload};
-use crate::response::{JsonResult, SimpleObject, TransactionEffect, UnsafeTransactionResult};
+use crate::response::{
+    JsonResult, ObjectList, SimpleObject, TransactionEffect, UnsafeTransactionResult,
+};
 use reqwest::{self, Response};
-use serde_json::Value;
+use serde_json::{to_value, Value};
 use std::error::Error;
 
 pub struct Client {
     pub network: Network,
     debug: bool,
+}
+
+pub fn debug_client(network: Network) -> Client {
+    Client {
+        network,
+        debug: true,
+    }
 }
 
 pub fn default_client(network: Network) -> Client {
@@ -154,7 +163,7 @@ impl Client {
         &self,
         object_id: &String,
     ) -> Result<JsonResult<SimpleObject>, Box<dyn Error>> {
-        let payload: Payload = Payload::sui_get_object(object_id, &FilterOption::default_filter());
+        let payload: Payload = Payload::sui_get_object(object_id, &FilterOption::default());
         match self.send_payload(&payload).await {
             Err(err) => Err(err),
             Ok(resp) => match resp.json::<JsonResult<SimpleObject>>().await {
@@ -167,14 +176,15 @@ impl Client {
     pub async fn get_owned_objects(
         &self,
         owner_address: String,
+        query: payload::QueryOption,
         cursor: Option<String>,
         limit: Option<u64>,
-    ) {
+    ) -> Result<JsonResult<ObjectList>, Box<dyn Error>> {
         let payload = Payload::build(
             String::from("suix_getOwnedObjects"),
             vec![
                 Value::String(owner_address),
-                Value::Null,
+                to_value(query).unwrap(),
                 match cursor {
                     None => Value::Null,
                     Some(v) => Value::String(v),
@@ -186,12 +196,10 @@ impl Client {
             ],
         );
         match self.send_payload(&payload).await {
-            Err(err) => {}
-            Ok(resp) => match resp.text().await {
-                Err(err) => {}
-                Ok(data) => {
-                    println!("{}", data);
-                }
+            Err(err) => Err(err),
+            Ok(resp) => match resp.json::<JsonResult<ObjectList>>().await {
+                Err(err) => Err(Box::new(err)),
+                Ok(json_object) => Ok(json_object),
             },
         }
     }
