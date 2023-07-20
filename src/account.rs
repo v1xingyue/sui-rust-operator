@@ -89,8 +89,13 @@ impl SuiAccount {
         format!("0x{}", h.to_hex())
     }
 
+    pub fn dump_hex_seed(&self) -> String {
+        let secret = &self.pair.secret;
+        hex::encode(secret.as_bytes())
+    }
+
     pub fn sign_data(&self, msg_b64: &str, scope: IntentScope) -> Vec<u8> {
-        let scheme = SignatureScheme::ED25519;
+        let scheme: SignatureScheme = SignatureScheme::ED25519;
         let msg_bytes = base64_decode(msg_b64).unwrap();
         let pub_bytes: &[u8; 32] = self.pair.public.as_bytes();
         let mut intent_message: Vec<u8> = vec![scope as u8, INTENT_VERSION_V0, APPID_SUI];

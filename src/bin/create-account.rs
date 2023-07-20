@@ -36,7 +36,7 @@ async fn main() {
         println!("Total accounts generated: {}", guard.len());
 
         for account in &*guard {
-            println!("Account: {}", account);
+            println!("Account: {} , seed : {} ", account, account.dump_hex_seed());
         }
     }
 }
