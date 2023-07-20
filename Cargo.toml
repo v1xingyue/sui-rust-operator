@@ -3,9 +3,9 @@ name = "sui-rust-operator"
 version = "0.1.2"
 edition = "2021"
 authors = ["v1xingyue <qixingyue@gmail.com>"]
-description = "This is description from Cargo.toml "
+description = "sui operator implement with rust"
 license = "MIT OR Apache-2.0"
-homepage = "https://github.com/v1xingyue/myrust"
+homepage = "https://github.com/v1xingyue/sui-rust-operator"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
