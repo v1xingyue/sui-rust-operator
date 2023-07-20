@@ -160,6 +160,27 @@ impl Client {
         }
     }
 
+    pub async fn unsafe_publish(
+        &self,
+        owner_address: String,
+        modules: Vec<String>,
+        dependencies: Vec<String>,
+        gas_object: String,
+        gas_budget: u64,
+    ) -> Result<JsonResult<UnsafeTransactionResult>, Box<dyn Error>> {
+        let payload: Payload =
+            Payload::publish(owner_address, modules, dependencies, gas_object, gas_budget);
+
+        let res = self.send_payload(&payload).await;
+        match res {
+            Err(err) => Err(err),
+            Ok(resp) => match resp.json::<JsonResult<UnsafeTransactionResult>>().await {
+                Err(err) => Err(Box::new(err)),
+                Ok(json_object) => Ok(json_object),
+            },
+        }
+    }
+
     pub async fn get_object_id(
         &self,
         object_id: &String,

@@ -5,8 +5,13 @@ use base64::{
     Engine as _,
 };
 use chrono::{DateTime, Local};
-use std::error::Error;
-use std::fmt::{Debug, Display};
+use serde::{Deserialize, Serialize};
+use std::{
+    error::Error,
+    fmt::{Debug, Display},
+};
+
+use std::{fs::File, io::Read};
 
 pub struct CustomErr {
     msg: String,
@@ -72,4 +77,21 @@ pub fn base64_decode(data_b64: &str) -> Result<Vec<u8>, base64::DecodeError> {
 pub fn base64_encode(data: &[u8]) -> String {
     let engine = engine::GeneralPurpose::new(&alphabet::STANDARD, general_purpose::PAD);
     engine.encode(data)
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct CompiledModule {
+    pub modules: Vec<String>,
+    pub dependencies: Vec<String>,
+    pub digest: Vec<u8>,
+}
+
+impl CompiledModule {
+    pub fn from_file(path: String) -> Self {
+        let mut file = File::open(path).expect("can't open keystore file");
+        let mut contents = String::new();
+        file.read_to_string(&mut contents)
+            .expect("read file failed...");
+        serde_json::from_str(&contents).expect("无法反序列化数据")
+    }
 }

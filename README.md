@@ -16,6 +16,17 @@ sui 官方提供的sdk [https://docs.sui.io/testnet/build/rust-sdk](https://docs
 
 ## 已实现的功能
 
+1. 模块发布
+
+需要使用sui 准备好编译完成的bytes 文件。
+
+```shell
+sui move build --dump-bytecode-as-base64 --path . > delopy.json
+```
+
+
+
+
 ## 示例合约介绍
 
 playground 提供一个测试模块，已完成move_call 的相关功能

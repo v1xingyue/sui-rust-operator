@@ -1,10 +1,6 @@
-use crate::account::SuiAccount;
-use crate::utils::CustomErr;
+use crate::{account::SuiAccount, utils::CustomErr};
 use serde::{Deserialize, Serialize};
-use std::env;
-use std::error::Error;
-use std::fs::File;
-use std::io::Read;
+use std::{env, error::Error, fs::File, io::Read};
 
 #[derive(Serialize, Deserialize)]
 pub struct Keystore {

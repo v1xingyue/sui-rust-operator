@@ -160,6 +160,25 @@ impl Payload {
         )
     }
 
+    pub fn publish(
+        owner_address: String,
+        modules: Vec<String>,
+        dependencies: Vec<String>,
+        gas_object: String,
+        gas_budget: u64,
+    ) -> Self {
+        Self::build(
+            "unsafe_publish".to_string(),
+            vec![
+                Value::String(owner_address),
+                Value::from(modules),
+                Value::from(dependencies),
+                Value::from(gas_object),
+                Value::String(format!("{}", gas_budget)),
+            ],
+        )
+    }
+
     pub fn move_call(
         owner_address: &str,
         package_object_id: &str,
