@@ -232,3 +232,9 @@ impl Default for CoinList {
         Self { data: vec![] }
     }
 }
+
+impl CoinInfo {
+    pub fn balance_u64(&self) -> u64 {
+        self.balance.parse::<u64>().unwrap()
+    }
+}

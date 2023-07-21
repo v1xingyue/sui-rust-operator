@@ -1,4 +1,9 @@
-use sui_rust_operator::{client, keystore::Keystore, network, utils};
+use sui_rust_operator::{
+    client,
+    keystore::Keystore,
+    network, print_beauty,
+    utils::{self, ADVISE_GAS_BUDGET},
+};
 
 #[tokio::main]
 async fn main() {
@@ -6,9 +11,11 @@ async fn main() {
     let store = Keystore::default();
     let account = store.load_account(0).unwrap();
 
-    println!("network : {}", network);
-    println!("account : {}", account.to_address());
-    println!("gateway : {}", network.get_gateway());
+    print_beauty!("network : {}", network);
+    print_beauty!("account : {}", account.to_address());
+    print_beauty!("gateway : {}", network.get_gateway());
+
+    print_beauty!("init done.",);
 
     let compiled = utils::CompiledModule::from_file("./playground/delopy.json".to_string());
     println!("modules : {:?}", compiled.modules);
@@ -16,13 +23,26 @@ async fn main() {
 
     let myclient = client::debug_client(network);
 
+    let gas_object = match myclient
+        .get_avaliable_gas(account.to_address(), ADVISE_GAS_BUDGET)
+        .await
+    {
+        Err(err) => {
+            print_beauty!("no gas found : {}", err);
+            None
+        }
+        Ok(msg) => Some(msg),
+    };
+
+    assert!(gas_object.is_some());
+
     let pub_info = myclient
         .unsafe_publish(
             account.to_address(),
             compiled.modules,
             compiled.dependencies,
-            "0x5a382376d9584cdb1d08595bec4d061cf25d95ffb6cf7fbbed475dd436bcfc0e".to_string(),
-            3000_000,
+            gas_object.unwrap().coin_object_id,
+            ADVISE_GAS_BUDGET,
         )
         .await
         .unwrap();

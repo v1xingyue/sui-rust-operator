@@ -1,9 +1,10 @@
 use crate::network::Network;
 use crate::payload::{self, FilterOption, Payload};
 use crate::response::{
-    Balance, CoinList, JsonResult, ObjectList, SimpleObject, TransactionEffect,
+    Balance, CoinInfo, CoinList, JsonResult, ObjectList, SimpleObject, TransactionEffect,
     UnsafeTransactionResult,
 };
+use crate::utils::CustomErr;
 use reqwest::{self, Response};
 use serde_json::{to_value, Value};
 use std::error::Error;
@@ -282,5 +283,23 @@ impl Client {
     ) -> Result<JsonResult<CoinList>, Box<dyn Error>> {
         self.get_all_coins(owner_address, "0x2::sui::SUI".to_string(), None, None)
             .await
+    }
+
+    pub async fn get_avaliable_gas(
+        &self,
+        owner_address: String,
+        amount: u64,
+    ) -> Result<CoinInfo, Box<dyn Error>> {
+        match self.get_gas_list(owner_address).await {
+            Err(err) => Err(err),
+            Ok(data) => {
+                for coin in data.result.data {
+                    if coin.balance_u64() > amount {
+                        return Ok(coin);
+                    }
+                }
+                Err(CustomErr::new_box("coin not found"))
+            }
+        }
     }
 }

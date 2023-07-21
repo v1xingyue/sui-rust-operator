@@ -5,13 +5,19 @@ use base64::{
     Engine as _,
 };
 use chrono::{DateTime, Local};
+use rand::Rng;
 use serde::{Deserialize, Serialize};
 use std::{
     error::Error,
     fmt::{Debug, Display},
+    fs::File,
+    io::Read,
+    thread,
+    time::Duration,
+    vec,
 };
 
-use std::{fs::File, io::Read};
+pub const ADVISE_GAS_BUDGET: u64 = 300_000_000;
 
 pub struct CustomErr {
     msg: String,
@@ -54,13 +60,44 @@ pub fn now_string() -> String {
     local.to_string()
 }
 
-pub fn mark_with_style(title: &str, style: &Style) {
+pub fn mark_with_style(title: String, style: &Style) {
     let add_space = format!("  {}  ", &title);
     let padding_str = format!("{:*^72}", add_space);
-    println!("\n[{}] - {}", now_string(), style.paint(padding_str));
+    println!(
+        "🦈 [{}] - {}",
+        style.to_owned().underline().paint(now_string()),
+        style.paint(padding_str)
+    );
 }
 
-pub fn mark_line(title: &str) {
+pub fn random_style() -> Style {
+    let styles = vec![
+        Color::Green.bold(),
+        Color::Blue.bold(),
+        Color::Red.bold(),
+        Color::Cyan.bold(),
+        Color::Yellow.bold(),
+    ];
+    let mut rng = rand::thread_rng();
+    let random_style = rng.gen_range(0, styles.len());
+    styles[random_style]
+}
+
+#[macro_export]
+macro_rules! print_beauty {
+    () => {
+        println!();
+    };
+    (s:expr) => {
+        println!("----");
+        utils::mark_with_style(s, &utils::random_style());
+    };
+    ($format:expr,$($arg:expr),*) => {
+        utils::mark_with_style(format!($format,$($arg),*), &utils::random_style());
+    };
+}
+
+pub fn mark_line(title: String) {
     let style: Style = Color::Green.bold();
     mark_with_style(title, &style);
     // println!("{:10}", "hello");
@@ -77,6 +114,11 @@ pub fn base64_decode(data_b64: &str) -> Result<Vec<u8>, base64::DecodeError> {
 pub fn base64_encode(data: &[u8]) -> String {
     let engine = engine::GeneralPurpose::new(&alphabet::STANDARD, general_purpose::PAD);
     engine.encode(data)
+}
+
+pub fn sleep_with_message(message: String) {
+    println!("{}", message);
+    thread::sleep(Duration::from_secs(5));
 }
 
 #[derive(Serialize, Deserialize)]
