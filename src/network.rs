@@ -1,6 +1,7 @@
 use crate::utils::CustomErr;
-
 use std::{env, error::Error, fmt::Display};
+
+const NETWORK_ENV_NAME: &str = "network";
 
 pub enum Network {
     Testnet,
@@ -14,22 +15,20 @@ pub fn default() -> Network {
 }
 
 pub fn from_env() -> Network {
-    const ENV_NAME: &str = "network";
-    let mut network: Network = Network::Mainnet;
-    if env::var_os(ENV_NAME).is_some() {
-        if let Ok(value) = env::var(ENV_NAME) {
+    if env::var_os(NETWORK_ENV_NAME).is_some() {
+        if let Ok(value) = env::var(NETWORK_ENV_NAME) {
             if value.eq("testnet") {
-                network = Network::Testnet;
+                return Network::Testnet;
             } else if value.eq("devnet") {
-                network = Network::Devnet;
+                return Network::Devnet;
             } else if value.eq("mainnet") {
-                network = Network::Mainnet;
+                return Network::Mainnet;
             } else {
-                network = Network::Custom(value);
+                return Network::Custom(value);
             }
         }
     }
-    network
+    Network::Mainnet
 }
 
 impl Network {

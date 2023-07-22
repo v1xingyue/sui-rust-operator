@@ -1,7 +1,7 @@
 use crate::network::Network;
 use crate::payload::{self, FilterOption, Payload};
 use crate::response::{
-    Balance, CoinInfo, CoinList, JsonResult, ObjectList, SimpleObject, TransactionEffect,
+    Balance, CoinInfo, CoinList, JsonResult, ObjectList, SimpleObject, TransactionEffectResult,
     UnsafeTransactionResult,
 };
 use crate::utils::CustomErr;
@@ -94,13 +94,18 @@ impl Client {
     pub async fn send_payload_effect(
         &self,
         payload: &Payload,
-    ) -> Result<JsonResult<TransactionEffect>, Box<dyn Error>> {
+    ) -> Result<JsonResult<TransactionEffectResult>, Box<dyn Error>> {
         match self.send_payload(payload).await {
-            Ok(resp) => match resp.json::<JsonResult<TransactionEffect>>().await {
+            Ok(resp) => match resp.json::<JsonResult<TransactionEffectResult>>().await {
                 Err(err) => Err(Box::new(err)),
                 Ok(json_object) => Ok(json_object),
             },
             Err(err) => Err(err),
+            // Ok(resp) => {
+            //     let body_message = resp.text().await.unwrap();
+            //     println!("{}", body_message);
+            //     Err(CustomErr::new_box("msg"))
+            // }
         }
     }
 

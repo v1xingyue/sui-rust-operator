@@ -15,7 +15,7 @@ async fn main() {
     print_beauty!("account : {}", account.to_address());
     print_beauty!("gateway : {}", network.get_gateway());
 
-    print_beauty!("init done.",);
+    print_beauty!("init done.");
 
     let compiled = utils::CompiledModule::from_file("./playground/delopy.json".to_string());
     println!("modules : {:?}", compiled.modules);
@@ -49,7 +49,9 @@ async fn main() {
     println!("{}", pub_info.result.tx_bytes);
 
     let signed_payload = account.sign_unsafe_transaciton(pub_info.result);
-    let effet = myclient.send_payload_effect(&signed_payload).await.unwrap();
+    let effet: sui_rust_operator::response::JsonResult<
+        sui_rust_operator::response::TransactionEffectResult,
+    > = myclient.send_payload_effect(&signed_payload).await.unwrap();
 
     println!("reuslt : {}", serde_json::to_string_pretty(&effet).unwrap());
     println!(

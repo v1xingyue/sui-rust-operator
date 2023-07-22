@@ -62,7 +62,7 @@ pub fn now_string() -> String {
 
 pub fn mark_with_style(title: String, style: &Style) {
     let add_space = format!("  {}  ", &title);
-    let padding_str = format!("{:*^72}", add_space);
+    let padding_str = format!("{:^72}", add_space);
     println!(
         "🦈 [{}] - {}",
         style.to_owned().underline().paint(now_string()),
@@ -88,12 +88,11 @@ macro_rules! print_beauty {
     () => {
         println!();
     };
-    (s:expr) => {
-        println!("----");
-        utils::mark_with_style(s, &utils::random_style());
+    ($s:expr) => {
+        utils::mark_with_style($s.to_string(), &utils::random_style());
     };
-    ($format:expr,$($arg:expr),*) => {
-        utils::mark_with_style(format!($format,$($arg),*), &utils::random_style());
+    ($format:expr$(,$arg:expr)*) => {
+        utils::mark_with_style(format!($format $(,$arg)*), &utils::random_style());
     };
 }
 
