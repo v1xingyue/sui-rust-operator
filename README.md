@@ -163,6 +163,12 @@ playground 提供一个测试模块，已完成move_call 的相关功能
 1. 合约 资源 ${address}::hello_world::HelloWorldObject
 2. entry : mint, mint_to , update_text, destroy
 
+## links
+
+* [https://docs.rs/sui-rust-operator/latest/sui_rust_operator/](https://docs.rs/sui-rust-operator/latest/sui_rust_operator/)
+* [https://docs.sui.io/testnet/build/rust-sdk](https://docs.sui.io/testnet/build/rust-sdk)
+* [https://docs.sui.io/sui-jsonrpc#sui_devInspectTransactionBlock](https://docs.sui.io/sui-jsonrpc#sui_devInspectTransactionBlock)
+* [https://github.com/coming-chat/go-sui-sdk](https://github.com/coming-chat/go-sui-sdk)
 
 ## TODO
 
