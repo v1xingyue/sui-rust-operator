@@ -158,7 +158,7 @@ sui move build --dump-bytecode-as-base64 --path . > delopy.json
 
 ## 示例合约介绍
 
-playground 提供一个测试模块，已完成move_call 的相关功能
+[playground](./playground/) 提供一个测试模块，已完成move_call 的相关功能
 
 1. 合约 资源 ${address}::hello_world::HelloWorldObject
 2. entry : mint, mint_to , update_text, destroy
