@@ -180,13 +180,13 @@ impl Payload {
     }
 
     pub fn move_call(
-        owner_address: &str,
-        package_object_id: &str,
-        module: &str,
-        function: &str,
+        owner_address: String,
+        package_object_id: String,
+        module: String,
+        function: String,
         type_arguments: Vec<Value>,
         arguments: Vec<Value>,
-        gas_object: &str,
+        gas_object: String,
         gas_budget: u64,
     ) -> Self {
         Self::build(

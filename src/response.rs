@@ -1,10 +1,11 @@
+use crate::{account::SuiAccount, client::Client};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-use std::{default::Default, fmt::Display, vec};
+use std::{default::Default, error::Error, fmt::Display, vec};
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(untagged)]
-enum Either<A, B> {
+pub enum Either<A, B> {
     A(A),
     B(B),
 }
@@ -14,23 +15,13 @@ pub struct JsonResult<T: Default> {
     pub jsonrpc: String,
     #[serde(default)]
     pub result: T,
-    #[serde(default)]
-    pub error: RpcError,
+    pub error: Option<RpcError>,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct RpcError {
     code: i32,
     message: String,
-}
-
-impl Default for RpcError {
-    fn default() -> Self {
-        Self {
-            code: 0,
-            message: String::from(""),
-        }
-    }
 }
 
 #[derive(Serialize, Deserialize)]
@@ -118,7 +109,7 @@ pub struct TransactionEffectResult {
     pub events: Vec<Value>,
     raw_transaction: String,
     transaction: Value,
-    effects: Option<TransactionEffects>,
+    pub effects: Option<TransactionEffects>,
 }
 
 impl Default for TransactionEffectResult {
@@ -140,6 +131,17 @@ impl Default for UnsafeTransactionResult {
             gas: vec![],
             input_objects: vec![],
         }
+    }
+}
+
+impl UnsafeTransactionResult {
+    pub async fn with_signed_execute(
+        &self,
+        client: &Client,
+        account: &SuiAccount,
+    ) -> Result<JsonResult<TransactionEffectResult>, Box<dyn Error>> {
+        let payload = account.sign_unsafe_transaciton(&self);
+        client.send_payload_effect(&payload).await
     }
 }
 
@@ -271,7 +273,7 @@ impl CoinInfo {
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct OwnerWithReference {
-    owner: Either<String, AddressOwner>,
+    pub owner: Either<String, AddressOwner>,
     reference: MiniObject,
 }
 
@@ -288,6 +290,23 @@ pub struct TransactionEffects {
     gas_used: GasUsed,
     created: Vec<OwnerWithReference>,
     mutated: Vec<OwnerWithReference>,
+}
+
+impl TransactionEffects {
+    pub fn find_imutable_object(&self) -> Vec<String> {
+        let mut items = vec![];
+        for info in &self.created {
+            match &info.owner {
+                Either::A(msg) => {
+                    if msg == "Immutable" {
+                        items.push(info.reference.object_id.to_string())
+                    }
+                }
+                _ => {}
+            }
+        }
+        items
+    }
 }
 
 #[derive(Serialize, Deserialize)]

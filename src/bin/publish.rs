@@ -48,16 +48,24 @@ async fn main() {
         .unwrap();
     println!("{}", pub_info.result.tx_bytes);
 
-    let signed_payload = account.sign_unsafe_transaciton(pub_info.result);
-    let effet: sui_rust_operator::response::JsonResult<
-        sui_rust_operator::response::TransactionEffectResult,
-    > = myclient.send_payload_effect(&signed_payload).await.unwrap();
+    match pub_info
+        .result
+        .with_signed_execute(&myclient, &account)
+        .await
+    {
+        Ok(effect) => {
+            print_beauty!(
+                "reuslt : {}",
+                serde_json::to_string_pretty(&effect).unwrap()
+            );
 
-    println!("reuslt : {}", serde_json::to_string_pretty(&effet).unwrap());
-    println!(
-        "transaction link : {}",
-        myclient
-            .network
-            .transaction_link(&effet.result.digest.to_string())
-    )
+            print_beauty!(
+                "transaction link : {}",
+                myclient.network.transaction_link(&effect.result.digest)
+            );
+        }
+        Err(err) => {
+            print_beauty!("error : {}", err);
+        }
+    }
 }

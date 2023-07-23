@@ -1,7 +1,9 @@
 use sui_rust_operator::{
     client,
     keystore::Keystore,
-    network, payload, print_beauty,
+    network,
+    payload::{self, QueryFilter, QueryOption},
+    print_beauty,
     response::CoinInfo,
     utils::{self, ADVISE_GAS_BUDGET},
 };
@@ -36,13 +38,12 @@ async fn main() {
     let gas_result = client
         .get_avaliable_gas(account.to_address(), ADVISE_GAS_BUDGET)
         .await;
-    let mut gas_object: CoinInfo = CoinInfo::default();
-    if gas_result.is_err() {
+    let gas_object: CoinInfo = if gas_result.is_err() {
         print_beauty!("sorry,you don't have enough gas. Bye!!!");
+        CoinInfo::default()
     } else {
-        gas_object = gas_result.unwrap();
-        print_beauty!("your gas {}", gas_object);
-    }
+        gas_result.unwrap()
+    };
 
     print_beauty!("publish example module : ");
 
@@ -56,7 +57,7 @@ async fn main() {
             account.to_address(),
             compiled.modules,
             compiled.dependencies,
-            gas_object.coin_object_id,
+            gas_object.coin_object_id.to_string(),
             ADVISE_GAS_BUDGET,
         )
         .await
@@ -64,18 +65,55 @@ async fn main() {
     print_beauty!("transcation bytes : {}", pub_info.result.tx_bytes);
     print_beauty!("sign with account.");
 
-    let signed_payload = account.sign_unsafe_transaciton(pub_info.result);
-    print_beauty!("sign with account done.");
-    let effet = client.send_payload_effect(&signed_payload).await.unwrap();
+    let effect = pub_info
+        .result
+        .with_signed_execute(&client, &account)
+        .await
+        .unwrap();
 
     print_beauty!(
         "publish reuslt : {}",
-        serde_json::to_string_pretty(&effet).unwrap()
+        serde_json::to_string_pretty(&effect).unwrap()
     );
     println!(
         "transaction link : {}",
         client
             .network
-            .transaction_link(&effet.result.digest.to_string())
-    )
+            .transaction_link(&effect.result.digest.to_string())
+    );
+
+    if let Some(effects) = &effect.result.effects {
+        let imutables = effects.find_imutable_object();
+        if imutables.len() > 0 {
+            let package_id = imutables[0].to_string();
+            print_beauty!("just publish one module : {}", package_id);
+            match client
+                .unsafe_move_call(
+                    account.to_address(),
+                    package_id.clone(),
+                    String::from("hello_world"),
+                    "mint".to_string(),
+                    vec![],
+                    vec![],
+                    gas_object.coin_object_id.to_string(),
+                    ADVISE_GAS_BUDGET,
+                )
+                .await
+            {
+                Ok(result) => {
+                    let signed_payload = account.sign_unsafe_transaciton(&result.result);
+                    let result = client.send_payload_effect(&signed_payload).await.unwrap();
+                    print_beauty!("transaction done : {}", result.result.digest);
+
+                    let struct_type = format!("{}::hello_world::HelloWorld", package_id.clone());
+                    let query = QueryOption::with_strutc_type(struct_type);
+                    let objects = client
+                        .get_owned_objects(account.to_address(), query, None, None)
+                        .await
+                        .unwrap();
+                }
+                _ => {}
+            }
+        }
+    }
 }

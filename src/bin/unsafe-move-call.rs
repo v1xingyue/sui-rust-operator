@@ -13,13 +13,13 @@ async fn main() {
     let account = store.load_account(0).unwrap();
 
     let payload = Payload::move_call(
-        &account.to_address(),
-        &"0x988fb71f38bb0323eeb5014c7a00e5988b047c09f39d58f157fc67d43ddfc091",
-        &"hello_world",
-        "mint",
+        account.to_address(),
+        "0x988fb71f38bb0323eeb5014c7a00e5988b047c09f39d58f157fc67d43ddfc091".to_string(),
+        "hello_world".to_string(),
+        "mint".to_string(),
         vec![],
         vec![],
-        &"0x6abb224a86b8e571f221ea6bf6a5028923b29b13201a3c29f6fdaaaa3b4cbb97",
+        "0x6abb224a86b8e571f221ea6bf6a5028923b29b13201a3c29f6fdaaaa3b4cbb97".to_string(),
         3000_000,
     );
 
@@ -34,13 +34,13 @@ async fn main() {
 
     match myclient
         .unsafe_move_call(
-            &account.to_address(),
-            &"0x988fb71f38bb0323eeb5014c7a00e5988b047c09f39d58f157fc67d43ddfc091",
-            &"hello_world",
-            "mint",
+            account.to_address(),
+            "0x988fb71f38bb0323eeb5014c7a00e5988b047c09f39d58f157fc67d43ddfc091".to_string(),
+            "hello_world".to_string(),
+            "mint".to_string(),
             vec![],
             vec![],
-            &"0x6abb224a86b8e571f221ea6bf6a5028923b29b13201a3c29f6fdaaaa3b4cbb97",
+            "0x6abb224a86b8e571f221ea6bf6a5028923b29b13201a3c29f6fdaaaa3b4cbb97".to_string(),
             3000_000,
         )
         .await

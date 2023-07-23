@@ -167,4 +167,5 @@ playground 提供一个测试模块，已完成move_call 的相关功能
 ## TODO
 
 1. 支持 其他的秘钥类型
-2. 多签交易
+2. 支持 批量交易 batch transaction
+3. 多签交易

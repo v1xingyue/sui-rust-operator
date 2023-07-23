@@ -37,7 +37,7 @@ async fn main() {
                 serde_json::to_string(&result).unwrap()
             );
 
-            let signed_transaction = account.sign_unsafe_transaciton(result.result);
+            let signed_transaction = account.sign_unsafe_transaciton(&result.result);
             match myclient.send_payload_effect(&signed_transaction).await {
                 Err(err) => {
                     println!("signed result error : {}", err)

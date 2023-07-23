@@ -109,7 +109,7 @@ impl SuiAccount {
         wrapper_signature.append(&mut pub_bytes.to_vec());
         wrapper_signature
     }
-    pub fn sign_unsafe_transaciton(&self, unsafe_transaction: UnsafeTransactionResult) -> Payload {
+    pub fn sign_unsafe_transaciton(&self, unsafe_transaction: &UnsafeTransactionResult) -> Payload {
         let result = self.sign_data(&unsafe_transaction.tx_bytes, IntentScope::TransactionData);
         Payload::safe_transaction_block_payload(
             &unsafe_transaction.tx_bytes,

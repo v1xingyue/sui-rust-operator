@@ -136,13 +136,13 @@ impl Client {
 
     pub async fn unsafe_move_call(
         &self,
-        owner_address: &str,
-        package_object_id: &str,
-        module: &str,
-        function: &str,
+        owner_address: String,
+        package_object_id: String,
+        module: String,
+        function: String,
         type_arguments: Vec<Value>,
         arguments: Vec<Value>,
-        gas_object: &str,
+        gas_object: String,
         gas_budget: u64,
     ) -> Result<JsonResult<UnsafeTransactionResult>, Box<dyn Error>> {
         let payload: Payload = Payload::move_call(
