@@ -175,3 +175,5 @@ sui move build --dump-bytecode-as-base64 --path . > delopy.json
 1. 支持 其他的秘钥类型
 2. 支持 批量交易 batch transaction
 3. 多签交易
+4. BCS support
+5. sui hook caller 和web2 无缝融合 
