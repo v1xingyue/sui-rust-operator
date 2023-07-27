@@ -156,6 +156,39 @@ match myclient
 sui move build --dump-bytecode-as-base64 --path . > delopy.json
 ```
 
+## hook 方式调用
+
+这种方式，用户无需sui的相关知识，直接通过函数模式触发和sui公链的写入即可。
+
+```rust
+
+use sui_rust_operator::{
+    client,
+    hook::{HookCaller, Target},
+    keystore::Keystore,
+    network,
+};
+
+let store: Keystore = Keystore::default();
+let account = store.load_account(0).unwrap();
+let network = network::from_env();
+let client = client::default_client(&network);
+let mut hook: HookCaller<'_> = HookCaller::new(
+    Target::new(
+        String::from("0x2b79486eaddff4fe262519e409214faefde25bcef88bac4f61a799a3d2e490bc"),
+        String::from("hello_world"),
+        String::from("mint"),
+    ),
+    account,
+    &client,
+);
+
+for _ in 1..=300 {
+    hook.call(vec![], vec![]).await;
+    hook.call(vec![], vec![]).await;
+}
+```
+
 ## 示例合约介绍
 
 [playground](./playground/) 提供一个测试模块，已完成move_call 的相关功能
