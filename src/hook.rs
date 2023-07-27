@@ -7,6 +7,8 @@ use crate::{
 };
 use serde_json::Value;
 
+const GAS_EXPIRED_MS: u64 = 300_000;
+
 struct UpdateGas {
     gas_object: String,
     expire_at: u64,
@@ -14,6 +16,7 @@ struct UpdateGas {
 
 impl UpdateGas {
     pub fn expired(&self) -> bool {
+        print_beauty!("\n{}\n{}\n", self.expire_at, current_timestamp());
         self.expire_at <= current_timestamp()
     }
 }
@@ -38,23 +41,21 @@ pub struct Target {
     package: String,
     module: String,
     fun_name: String,
-    type_args: Vec<String>,
 }
 
 impl Target {
-    pub fn new(package: String, module: String, fun_name: String, type_args: Vec<String>) -> Self {
+    pub fn new(package: String, module: String, fun_name: String) -> Self {
         Self {
             package,
             module,
             fun_name,
-            type_args,
         }
     }
 }
 
 impl Default for Target {
     fn default() -> Self {
-        Self::new(String::from(""), String::from(""), String::from(""), vec![])
+        Self::new(String::from(""), String::from(""), String::from(""))
     }
 }
 
@@ -62,7 +63,7 @@ impl<'a> HookCaller<'a> {
     pub fn get_network(&self) -> &Network {
         self.client.network
     }
-    pub async fn call(&mut self, arguments: Vec<Value>) {
+    pub async fn call(&mut self, type_arguments: Vec<String>, arguments: Vec<Value>) {
         self.update_gas().await;
         print_beauty!("you will call sui network : ");
 
@@ -73,7 +74,7 @@ impl<'a> HookCaller<'a> {
                 self.target.package.to_string(),
                 self.target.module.to_string(),
                 self.target.fun_name.to_string(),
-                self.target.type_args.to_owned(),
+                type_arguments,
                 arguments,
                 self.gas.gas_object.to_string(),
                 utils::ADVISE_GAS_BUDGET,
@@ -110,7 +111,7 @@ impl<'a> HookCaller<'a> {
                 }
                 Ok(gas_result) => {
                     self.gas.gas_object = gas_result.coin_object_id;
-                    self.gas.expire_at = current_timestamp() + 120;
+                    self.gas.expire_at = current_timestamp() + GAS_EXPIRED_MS;
                 }
             }
         }
