@@ -210,3 +210,5 @@ for _ in 1..=300 {
 3. 多签交易
 4. BCS support
 5. sui hook caller 和web2 无缝融合 
+
+![https://api-mainnet.suifrens.sui.io/suifrens/0x2dfc31f14cc8b0040407e818568fa37e95e52281b684b67050ab32a16942d955/svg](https://api-mainnet.suifrens.sui.io/suifrens/0x2dfc31f14cc8b0040407e818568fa37e95e52281b684b67050ab32a16942d955/svg)
