@@ -1,6 +1,6 @@
 [package]
 name = "sui-rust-operator"
-version = "0.1.5"
+version = "0.1.8"
 edition = "2021"
 authors = ["v1xingyue <qixingyue@gmail.com>"]
 description = "sui operator implement with rust"
