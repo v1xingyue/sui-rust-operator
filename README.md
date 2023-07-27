@@ -211,4 +211,4 @@ for _ in 1..=300 {
 4. BCS support
 5. sui hook caller 和web2 无缝融合 
 
-![https://api-mainnet.suifrens.sui.io/suifrens/0x2dfc31f14cc8b0040407e818568fa37e95e52281b684b67050ab32a16942d955/svg](https://api-mainnet.suifrens.sui.io/suifrens/0x2dfc31f14cc8b0040407e818568fa37e95e52281b684b67050ab32a16942d955/svg)
+![sui rens](https://api-mainnet.suifrens.sui.io/suifrens/0x31e7c60c4fa9287e940e2d9e35ed2a10e80bf65049a490254ecf8adcc3a1cf98/svg)
