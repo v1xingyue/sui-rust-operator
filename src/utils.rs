@@ -61,8 +61,8 @@ pub fn now_string() -> String {
 }
 
 pub fn mark_with_style(title: String, style: &Style) {
-    let add_space = format!("  {}  ", &title);
-    let padding_str = format!("{:^72}", add_space);
+    let add_space = format!(" {} ", &title);
+    let padding_str = format!("{:<72}", add_space);
     println!(
         "🦈 [{}] - {}",
         style.to_owned().underline().paint(now_string()),
@@ -72,28 +72,16 @@ pub fn mark_with_style(title: String, style: &Style) {
 
 pub fn random_style() -> Style {
     let styles = vec![
-        Color::Green.bold(),
-        Color::Blue.bold(),
-        Color::Red.bold(),
-        Color::Cyan.bold(),
-        Color::Yellow.bold(),
+        Color::Red.italic(),
+        Color::Green.italic(),
+        Color::Yellow.italic(),
+        Color::Blue.bold().underline().italic(),
+        Color::Purple.underline().bold(),
+        Color::Cyan.bold().bold(),
     ];
     let mut rng = rand::thread_rng();
     let random_style = rng.gen_range(0, styles.len());
     styles[random_style]
-}
-
-#[macro_export]
-macro_rules! print_beauty {
-    () => {
-        println!();
-    };
-    ($s:expr) => {
-        utils::mark_with_style($s.to_string(), &utils::random_style());
-    };
-    ($format:expr$(,$arg:expr)*) => {
-        utils::mark_with_style(format!($format $(,$arg)*), &utils::random_style());
-    };
 }
 
 pub fn mark_line(title: String) {
@@ -129,10 +117,10 @@ pub struct CompiledModule {
 
 impl CompiledModule {
     pub fn from_file(path: String) -> Self {
-        let mut file = File::open(path).expect("can't open keystore file");
+        let mut file = File::open(path).expect("can't open dumped file");
         let mut contents = String::new();
         file.read_to_string(&mut contents)
-            .expect("read file failed...");
+            .expect("read file error .");
         serde_json::from_str(&contents).expect("无法反序列化数据")
     }
 }

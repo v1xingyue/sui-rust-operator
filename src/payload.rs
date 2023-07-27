@@ -1,6 +1,6 @@
 use crate::utils::current_timestamp;
 use serde::{Deserialize, Serialize};
-use serde_json::{to_value, Value};
+use serde_json::{json, to_value, Value};
 use std::fmt::Display;
 use std::vec::Vec;
 
@@ -184,7 +184,7 @@ impl Payload {
         package_object_id: String,
         module: String,
         function: String,
-        type_arguments: Vec<Value>,
+        type_arguments: Vec<String>,
         arguments: Vec<Value>,
         gas_object: String,
         gas_budget: u64,
@@ -196,7 +196,7 @@ impl Payload {
                 Value::String(package_object_id.to_string()),
                 Value::String(module.to_string()),
                 Value::String(function.to_string()),
-                Value::Array(type_arguments),
+                json!(type_arguments),
                 Value::Array(arguments),
                 Value::String(gas_object.to_string()),
                 Value::String(format!("{}", gas_budget)),

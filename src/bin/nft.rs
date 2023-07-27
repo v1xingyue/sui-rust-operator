@@ -1,3 +1,4 @@
+use serde_json::{json, Value};
 use std::vec;
 use sui_rust_operator::{client, keystore::Keystore, network, payload::Payload};
 
@@ -13,11 +14,14 @@ async fn main() {
 
     let payload = Payload::move_call(
         account.to_address(),
-        "0x988fb71f38bb0323eeb5014c7a00e5988b047c09f39d58f157fc67d43ddfc091".to_string(),
-        "hello_world".to_string(),
+        "0x66b54ca0bee63651789b2f53b99ce100adb4a6b5c35667eae4ac2279c9a9acb2".to_string(),
+        "my_nft".to_string(),
         "mint".to_string(),
         vec![],
-        vec![],
+        vec![
+            json!(String::from("hello").into_bytes()),
+            json!(String::from("hello").into_bytes()),
+        ],
         "0x6abb224a86b8e571f221ea6bf6a5028923b29b13201a3c29f6fdaaaa3b4cbb97".to_string(),
         3000_000,
     );

@@ -1,12 +1,11 @@
-use crate::payload::Payload;
-use crate::response::UnsafeTransactionResult;
+use crate::print_beauty;
 use crate::utils::{base64_decode, base64_encode, CustomErr};
+use crate::{payload::Payload, response::UnsafeTransactionResult, utils};
 use blake2b_simd::{Hash, Params};
 use ed25519_dalek::{Keypair, PublicKey, SecretKey, Signature, Signer};
 use hex;
 use rand::rngs::OsRng;
-use std::error::Error;
-use std::{env, fmt::Display, str};
+use std::{env, error::Error, fmt::Display, str};
 
 const INTENT_VERSION_V0: u8 = 0;
 const APPID_SUI: u8 = 0;
@@ -100,9 +99,9 @@ impl SuiAccount {
         let pub_bytes: &[u8; 32] = self.pair.public.as_bytes();
         let mut intent_message: Vec<u8> = vec![scope as u8, INTENT_VERSION_V0, APPID_SUI];
         intent_message.append(&mut msg_bytes.to_vec());
-        println!("intent : {}", base64_encode(&intent_message));
+        print_beauty!("intent : {}", base64_encode(&intent_message));
         let h = msg_hash(&intent_message);
-        println!("blake2b: {}", hex::encode(h.as_bytes()));
+        print_beauty!("blake2b: {}", hex::encode(h.as_bytes()));
         let signature: Signature = self.pair.sign(h.as_bytes());
         let mut wrapper_signature: Vec<u8> = vec![scheme as u8];
         wrapper_signature.append(&mut signature.to_bytes().to_vec());

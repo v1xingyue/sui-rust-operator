@@ -9,26 +9,26 @@ use reqwest::{self, Response};
 use serde_json::{to_value, Value};
 use std::error::Error;
 
-pub struct Client {
-    pub network: Network,
+pub struct Client<'a> {
+    pub network: &'a Network,
     debug: bool,
 }
 
-pub fn debug_client(network: Network) -> Client {
+pub fn debug_client(network: &Network) -> Client {
     Client {
         network,
         debug: true,
     }
 }
 
-pub fn default_client(network: Network) -> Client {
+pub fn default_client(network: &Network) -> Client {
     Client {
         network,
         debug: false,
     }
 }
 
-impl Client {
+impl<'a> Client<'a> {
     pub fn set_debug(&mut self) {
         self.debug = true;
     }
@@ -140,7 +140,7 @@ impl Client {
         package_object_id: String,
         module: String,
         function: String,
-        type_arguments: Vec<Value>,
+        type_arguments: Vec<String>,
         arguments: Vec<Value>,
         gas_object: String,
         gas_budget: u64,

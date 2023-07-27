@@ -26,13 +26,13 @@ pub struct RpcError {
 
 #[derive(Serialize, Deserialize)]
 pub struct SimpleObject {
-    data: ObjectData,
+    pub data: ObjectData,
 }
 
 #[derive(Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct ObjectData {
-    object_id: String,
+    pub object_id: String,
     version: String,
     digest: String,
     #[serde(rename = "type")]
@@ -135,9 +135,9 @@ impl Default for UnsafeTransactionResult {
 }
 
 impl UnsafeTransactionResult {
-    pub async fn with_signed_execute(
+    pub async fn with_signed_execute<'a>(
         &self,
-        client: &Client,
+        client: &'a Client<'a>,
         account: &SuiAccount,
     ) -> Result<JsonResult<TransactionEffectResult>, Box<dyn Error>> {
         let payload = account.sign_unsafe_transaciton(&self);
@@ -288,23 +288,26 @@ pub struct TransactionEffects {
     gas_object: OwnerWithReference,
     modified_at_versions: Vec<ObjectVersion>,
     gas_used: GasUsed,
-    created: Vec<OwnerWithReference>,
+    created: Option<Vec<OwnerWithReference>>,
     mutated: Vec<OwnerWithReference>,
 }
 
 impl TransactionEffects {
     pub fn find_imutable_object(&self) -> Vec<String> {
         let mut items = vec![];
-        for info in &self.created {
-            match &info.owner {
-                Either::A(msg) => {
-                    if msg == "Immutable" {
-                        items.push(info.reference.object_id.to_string())
+        if let Some(created_items) = &self.created {
+            for info in created_items {
+                match &info.owner {
+                    Either::A(msg) => {
+                        if msg == "Immutable" {
+                            items.push(info.reference.object_id.to_string())
+                        }
                     }
+                    _ => {}
                 }
-                _ => {}
             }
         }
+
         items
     }
 }

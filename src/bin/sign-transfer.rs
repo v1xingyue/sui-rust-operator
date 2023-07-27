@@ -9,7 +9,7 @@ async fn main() {
     println!("gateway is : {}", network.get_gateway());
     println!("network is : {}", network);
     println!("address is : {}", account.to_address());
-    let myclient = client::default_client(network);
+    let myclient = client::default_client(&network);
 
     let (object_id, gas_object, gas_budget, to_address) = (
         "0x104732c4b8961870be54b9d04c33cb54dfec72574c33aa0cce640e6dbfb56756",

@@ -1,8 +1,9 @@
+use serde_json::Value;
 use sui_rust_operator::{
     client,
     keystore::Keystore,
     network,
-    payload::{self, QueryFilter, QueryOption},
+    payload::QueryOption,
     print_beauty,
     response::CoinInfo,
     utils::{self, ADVISE_GAS_BUDGET},
@@ -18,7 +19,7 @@ async fn main() {
     print_beauty!("account is : {}", account.to_address());
     print_beauty!("network gateway is : {}", network.get_gateway());
 
-    let client = client::default_client(network);
+    let client = client::default_client(&network);
     for balance in client
         .get_all_balances(account.to_address())
         .await
@@ -75,7 +76,7 @@ async fn main() {
         "publish reuslt : {}",
         serde_json::to_string_pretty(&effect).unwrap()
     );
-    println!(
+    print_beauty!(
         "transaction link : {}",
         client
             .network
@@ -103,14 +104,53 @@ async fn main() {
                 Ok(result) => {
                     let signed_payload = account.sign_unsafe_transaciton(&result.result);
                     let result = client.send_payload_effect(&signed_payload).await.unwrap();
-                    print_beauty!("transaction done : {}", result.result.digest);
+                    print_beauty!("mint transaction done : {}", result.result.digest);
 
-                    let struct_type = format!("{}::hello_world::HelloWorld", package_id.clone());
+                    let struct_type =
+                        format!("{}::hello_world::HelloWorldObject", package_id.clone());
                     let query = QueryOption::with_strutc_type(struct_type);
+
+                    print_beauty!("query options : {}", serde_json::to_string(&query).unwrap());
+
                     let objects = client
                         .get_owned_objects(account.to_address(), query, None, None)
                         .await
                         .unwrap();
+                    for object in objects.result.data {
+                        print_beauty!("HelloWorldObject with id  : {}", object.data.object_id);
+
+                        print_beauty!("now remove this object .");
+
+                        match client
+                            .unsafe_move_call(
+                                account.to_address(),
+                                package_id.clone(),
+                                String::from("hello_world"),
+                                "destroy".to_string(),
+                                vec![],
+                                vec![Value::String(object.data.object_id.to_string())],
+                                gas_object.coin_object_id.to_string(),
+                                ADVISE_GAS_BUDGET,
+                            )
+                            .await
+                        {
+                            Ok(data) => {
+                                let effect = data
+                                    .result
+                                    .with_signed_execute(&client, &account)
+                                    .await
+                                    .unwrap();
+
+                                print_beauty!(
+                                    "destroy transaction link : {}",
+                                    client
+                                        .network
+                                        .transaction_link(&effect.result.digest.to_string())
+                                );
+                            }
+                            _ => {}
+                        }
+                    }
                 }
                 _ => {}
             }

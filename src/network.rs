@@ -17,21 +17,25 @@ pub fn default() -> Network {
 pub fn from_env() -> Network {
     if env::var_os(NETWORK_ENV_NAME).is_some() {
         if let Ok(value) = env::var(NETWORK_ENV_NAME) {
-            if value.eq("testnet") {
-                return Network::Testnet;
-            } else if value.eq("devnet") {
-                return Network::Devnet;
-            } else if value.eq("mainnet") {
-                return Network::Mainnet;
-            } else {
-                return Network::Custom(value);
-            }
+            return Network::from_name(value);
         }
     }
     Network::Mainnet
 }
 
 impl Network {
+    pub fn from_name(name: String) -> Self {
+        if name.eq("testnet") {
+            return Network::Testnet;
+        } else if name.eq("devnet") {
+            return Network::Devnet;
+        } else if name.eq("mainnet") {
+            return Network::Mainnet;
+        } else {
+            return Network::Custom(name);
+        }
+    }
+
     pub fn get_gateway(&self) -> String {
         match self {
             Network::Testnet => String::from("https://fullnode.testnet.sui.io:443"),
