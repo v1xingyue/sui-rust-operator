@@ -6,6 +6,8 @@ authors = ["v1xingyue <qixingyue@gmail.com>"]
 description = "sui operator implement with rust"
 license = "MIT OR Apache-2.0"
 homepage = "https://github.com/v1xingyue/sui-rust-operator"
+repository = "https://github.com/v1xingyue/sui-rust-operator.git"
+
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

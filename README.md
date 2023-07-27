@@ -1,6 +1,11 @@
 # sui-rust-operator
 
-用rust 封装的一个和sui进行交互的组件库。
+1. 用rust 封装的一个和sui进行交互的组件库。
+2. cargo 的 sui plugin
+
+```shell
+cargo install --git https://github.com/v1xingyue/sui-rust-operator.git --branch main --bin cargo-sui
+```
 
 ## 项目起因
 
