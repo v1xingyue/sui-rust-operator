@@ -21,7 +21,7 @@ async fn main() {
     println!("modules : {:?}", compiled.modules);
     println!("dependencies : {:?}", compiled.dependencies);
 
-    let myclient = client::debug_client(&network);
+    let myclient = client::debug_client(network);
 
     let gas_object = match myclient
         .get_avaliable_gas(account.to_address(), ADVISE_GAS_BUDGET)

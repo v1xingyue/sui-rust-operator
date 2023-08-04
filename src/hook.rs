@@ -8,7 +8,6 @@ use crate::{
 use serde_json::Value;
 
 const GAS_EXPIRED_MS: u64 = 300_000;
-
 struct UpdateGas {
     gas_object: String,
     expire_at: u64,
@@ -30,10 +29,10 @@ impl Default for UpdateGas {
     }
 }
 
-pub struct HookCaller<'a> {
+pub struct HookCaller {
     target: Target,
     account: SuiAccount,
-    client: &'a Client<'a>,
+    client: Client,
     gas: UpdateGas,
 }
 
@@ -59,9 +58,9 @@ impl Default for Target {
     }
 }
 
-impl<'a> HookCaller<'a> {
+impl HookCaller {
     pub fn get_network(&self) -> &Network {
-        self.client.network
+        &self.client.network
     }
     pub async fn call(&mut self, type_arguments: Vec<String>, arguments: Vec<Value>) {
         self.update_gas().await;
@@ -117,12 +116,16 @@ impl<'a> HookCaller<'a> {
         }
     }
 
-    pub fn new(target: Target, account: SuiAccount, client: &'a Client) -> Self {
+    pub fn new(target: Target, account: SuiAccount, client: Client) -> Self {
         Self {
             target,
             account,
             client,
             gas: UpdateGas::default(),
         }
+    }
+
+    pub fn get_account(&self) -> &SuiAccount {
+        &self.account
     }
 }

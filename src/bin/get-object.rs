@@ -3,7 +3,7 @@ use sui_rust_operator::{client, network};
 #[tokio::main]
 async fn main() {
     let network = network::default();
-    let myclient: client::Client = client::default_client(&network);
+    let myclient: client::Client = client::default_client(network);
     let object_id =
         "0x2dfc31f14cc8b0040407e818568fa37e95e52281b684b67050ab32a16942d955".to_string();
     println!("gateway is : {}", myclient.network.get_gateway());

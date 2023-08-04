@@ -137,7 +137,7 @@ impl Default for UnsafeTransactionResult {
 impl UnsafeTransactionResult {
     pub async fn with_signed_execute<'a>(
         &self,
-        client: &'a Client<'a>,
+        client: &Client,
         account: &SuiAccount,
     ) -> Result<JsonResult<TransactionEffectResult>, Box<dyn Error>> {
         let payload = account.sign_unsafe_transaciton(&self);

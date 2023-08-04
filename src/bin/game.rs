@@ -19,7 +19,7 @@ async fn main() {
     print_beauty!("account is : {}", account.to_address());
     print_beauty!("network gateway is : {}", network.get_gateway());
 
-    let client = client::default_client(&network);
+    let client = client::default_client(network);
     for balance in client
         .get_all_balances(account.to_address())
         .await

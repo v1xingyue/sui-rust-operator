@@ -6,7 +6,7 @@ async fn main() {
     println!("gateway is : {}", network.get_gateway());
     println!("network is : {}", network);
 
-    let myclient = client::default_client(&network);
+    let myclient = client::default_client(network);
     let (owner_address, object_id, gas_object, gas_budget, to_address) = (
         "0x0a27f6f7d3b7907fbcc4265ee8e63f5447312a8f53fb270a36f892e6f264008f",
         "0x104732c4b8961870be54b9d04c33cb54dfec72574c33aa0cce640e6dbfb56756",

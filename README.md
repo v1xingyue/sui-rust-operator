@@ -188,8 +188,7 @@ let mut hook: HookCaller<'_> = HookCaller::new(
     &client,
 );
 
-for _ in 1..=300 {
-    hook.call(vec![], vec![]).await;
+for _ in 1..=3 {
     hook.call(vec![], vec![]).await;
 }
 ```
@@ -207,6 +206,7 @@ for _ in 1..=300 {
 * [https://docs.sui.io/testnet/build/rust-sdk](https://docs.sui.io/testnet/build/rust-sdk)
 * [https://docs.sui.io/sui-jsonrpc#sui_devInspectTransactionBlock](https://docs.sui.io/sui-jsonrpc#sui_devInspectTransactionBlock)
 * [https://github.com/coming-chat/go-sui-sdk](https://github.com/coming-chat/go-sui-sdk)
+* [https://actix.rs/docs/getting-started](https://actix.rs/docs/getting-started)
 
 ## TODO
 
@@ -214,6 +214,6 @@ for _ in 1..=300 {
 2. 支持 批量交易 batch transaction
 3. 多签交易
 4. BCS support
-5. sui hook caller 和web2 无缝融合 
+5. sui hook caller 和web2 无缝融合
 
 ![sui rens](https://api-mainnet.suifrens.sui.io/suifrens/0x31e7c60c4fa9287e940e2d9e35ed2a10e80bf65049a490254ecf8adcc3a1cf98/svg)
