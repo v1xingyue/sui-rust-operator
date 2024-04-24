@@ -1,3 +1,5 @@
+name: Publish this crate to crates.io
+
 on:
   push:
     tags:
@@ -7,10 +9,11 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
+  build-and-publish:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+      name: checkout 
     - uses: actions-rs/toolchain@v1
       with:
           toolchain: stable
